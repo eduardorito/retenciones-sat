@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Retenciones ISR & IVA 2026 | Tax Calc Pro</title>
+    <meta name="description" content="Calculadora de retenciones fiscales en México (RESICO, Arrendamiento, Honorarios, Fletes). Individual y procesamiento masivo en Excel.">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#080c14',
+                        cardbg: '#0f172a',
+                        cyanNeon: '#00f0ff',
+                        blueNeon: '#3b82f6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons & Font -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- SheetJS & pdfMake -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8T4GC05LYQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-8T4GC05LYQ');
+    </script>
+
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8697334409468964" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #080c14;
+            color: #f1f5f9;
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(0, 240, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(59, 130, 246, 0.06) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .tab-btn.active {
+            background-color: rgba(0, 240, 255, 0.15);
+            border-color: #00f0ff;
+            color: #00f0ff;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-30 glass-panel border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20">
+                    <i class="fa-solid fa-percent"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">
+                        Calculadora de Retenciones FISCALES 2026
+                    </h1>
+                    <p class="text-[11px] text-slate-400 font-medium">Honorarios, RESICO, Arrendamiento, Fletes & Masivo</p>
+                </div>
+            </div>
+            
+            <a href="https://buymeacoffee.com/eduardorito" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 hover:bg-amber-500/20 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-mug-hot"></i> <span>Invítame un café</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-6xl w-full mx-auto px-4 py-8 space-y-8">
+
+        <!-- Modos de Cálculo -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 glass-panel p-2 rounded-2xl">
+            <button id="tabDirect" onclick="switchMode('direct')" class="tab-btn active py-3 px-4 rounded-xl text-xs font-bold border border-transparent transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Subtotal ➔ Retenciones & Total</span>
+            </button>
+            <button id="tabInverse" onclick="switchMode('inverse')" class="tab-btn py-3 px-4 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i>
+                <span>Neto Deseado ➔ Factura Inversa</span>
+            </button>
+            <button id="tabBulk" onclick="switchMode('bulk')" class="tab-btn py-3 px-4 rounded-xl text-xs font-bold border border-transparent text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-excel text-emerald-400"></i>
+                <span>Cálculo Masivo Excel</span>
+            </button>
+        </div>
+
+        <!-- MÓDULO INDIVIDUAL -->
+        <div id="singleModule" class="space-y-8">
+            <section class="glass-panel rounded-2xl p-6 sm:p-8 space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                    
+                    <!-- Selección de Actividad -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Actividad / Régimen de Operación</label>
+                        <select id="actType" onchange="calculate()" class="w-full bg-slate-900 text-slate-200 text-xs sm:text-sm border border-slate-700/80 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan-400">
+                            <option value="resico_pf_pm">RESICO PF a Moral (ISR 1.25% / IVA 10.6667%)</option>
+                            <option value="resico_pf_pf">RESICO PF a PF (Sin Retenciones / ISR 0% IVA 0%)</option>
+                            <option value="honorarios">Servicios Profesionales / Honorarios (ISR 10% / IVA 10.6667%)</option>
+                            <option value="arrendamiento">Arrendamiento de Inmuebles (ISR 10% / IVA 10.6667%)</option>
+                            <option value="fletes">Fletes y Autotransporte Terrestre (IVA 4% Retenido)</option>
+                            <option value="comisiones">Comisionistas (ISR 10% / IVA 10.6667%)</option>
+                        </select>
+                    </div>
+
+                    <!-- Input del Monto -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label id="inputLabel" class="block text-xs font-bold text-cyan-400 uppercase tracking-wider">Monto Subtotal (Sin IVA)</label>
+                            <button onclick="clearInput()" class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/50 hover:bg-amber-400/30 transition-all flex items-center gap-1.5 shadow-sm shadow-amber-400/10">
+                                <i class="fa-solid fa-broom text-[11px]"></i> Limpiar
+                            </button>
+                        </div>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                            <input type="number" id="amountInput" oninput="calculate()" value="" placeholder="0.00" step="0.01" min="0" class="w-full bg-slate-900 text-white font-mono font-bold text-lg pl-8 pr-4 py-2.5 rounded-xl border border-slate-700/80 focus:outline-none focus:border-cyan-400" autocomplete="off">
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Tarjetas Resumen -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyan-400">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Subtotal</p>
+                    <p id="resSubtotal" class="text-2xl font-black text-white font-mono mt-1">$0.00</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-blue-400">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">IVA Trasladado (16%)</p>
+                    <p id="resIVA" class="text-2xl font-black text-blue-400 font-mono mt-1">$0.00</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-rose-500">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Retenciones (ISR + IVA)</p>
+                    <p id="resRetTotal" class="text-2xl font-black text-rose-400 font-mono mt-1">$0.00</p>
+                </div>
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-emerald-400">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Neto a Cobrar</p>
+                    <p id="resTotalNeto" class="text-2xl font-black text-emerald-400 font-mono mt-1">$0.00</p>
+                </div>
+            </section>
+
+            <!-- Desglose Completo de Facturación -->
+            <section class="glass-panel rounded-2xl p-6 space-y-4">
+                <h3 class="font-bold text-slate-200 text-sm flex items-center gap-2 border-b border-slate-800 pb-3">
+                    <i class="fa-solid fa-receipt text-cyan-400"></i> Desglose Oficial para la Emisión de Factura CFDI
+                </h3>
+                
+                <div class="space-y-2.5 text-xs font-mono">
+                    <div class="flex justify-between py-1 border-b border-slate-800/50 text-slate-300">
+                        <span>Subtotal de la Operación:</span>
+                        <span id="detailSubtotal">$0.00</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/50 text-slate-300">
+                        <span>(+) IVA Trasladado (16%):</span>
+                        <span id="detailIVA">$0.00</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/50 text-slate-400">
+                        <span>(-) Retención de ISR <span id="labelRetISRPct" class="text-slate-500">(0%)</span>:</span>
+                        <span id="detailRetISR" class="text-rose-300">-$0.00</span>
+                    </div>
+                    <div class="flex justify-between py-1 border-b border-slate-800/50 text-slate-400">
+                        <span>(-) Retención de IVA <span id="labelRetIVAPct" class="text-slate-500">(0%)</span>:</span>
+                        <span id="detailRetIVA" class="text-rose-300">-$0.00</span>
+                    </div>
+                    <div class="flex justify-between py-2 border-t border-cyan-500/30 text-sm font-bold text-white">
+                        <span>(=) Monto Total Líquido a Transferir/Recibir:</span>
+                        <span id="detailTotalNeto" class="text-emerald-400">$0.00</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- MÓDULO MASIVO (Excel) -->
+        <div id="bulkModule" class="hidden space-y-6">
+            <section class="glass-panel rounded-2xl p-6 sm:p-8 text-center border-2 border-dashed border-slate-700 hover:border-cyan-400 transition-all cursor-pointer" id="dropZone" onclick="document.getElementById('excelFile').click()">
+                <input type="file" id="excelFile" accept=".xlsx, .xls" class="hidden" onchange="handleExcelUpload(event)">
+                <div class="space-y-3">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-3xl mx-auto border border-emerald-500/20">
+                        <i class="fa-solid fa-file-excel"></i>
+                    </div>
+                    <p class="font-bold text-slate-200 text-base">Arrastra tu archivo de Excel con importes aquí</p>
+                    <p class="text-xs text-slate-400">Detecta columnas como <span class="text-cyan-400 font-mono">Nombre</span>, <span class="text-cyan-400 font-mono">Monto</span>, <span class="text-cyan-400 font-mono">Subtotal</span> o <span class="text-cyan-400 font-mono">Neto</span>.</p>
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center space-x-4">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Régimen / Actividad</label>
+                        <select id="bulkActType" onchange="reprocessBulk()" class="bg-slate-900 text-slate-200 text-xs border border-slate-700/80 rounded-lg px-3 py-2 focus:outline-none focus:border-cyan-400">
+                            <option value="resico_pf_pm">RESICO PF a PM</option>
+                            <option value="resico_pf_pf">RESICO PF a PF</option>
+                            <option value="honorarios">Servicios Profesionales</option>
+                            <option value="arrendamiento">Arrendamiento Inmuebles</option>
+                            <option value="fletes">Fletes (4% IVA)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportBulkExcel()" id="btnExpExcel" disabled class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/30 transition-all flex items-center gap-2 disabled:opacity-40">
+                        <i class="fa-solid fa-file-excel"></i> Exportar Excel
+                    </button>
+                </div>
+            </section>
+
+            <section class="glass-panel rounded-2xl overflow-hidden">
+                <div class="overflow-x-auto max-h-[420px]">
+                    <table class="w-full text-left text-xs font-mono">
+                        <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 sticky top-0">
+                            <tr>
+                                <th class="p-3">#</th>
+                                <th class="p-3">Concepto / Nombre</th>
+                                <th class="p-3 text-right">Subtotal</th>
+                                <th class="p-3 text-right">IVA (16%)</th>
+                                <th class="p-3 text-right text-rose-300">Ret. ISR</th>
+                                <th class="p-3 text-right text-rose-300">Ret. IVA</th>
+                                <th class="p-3 text-right text-emerald-400">Total Neto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulkTableBody" class="divide-y divide-slate-800/60 text-slate-300">
+                            <tr>
+                                <td colspan="7" class="p-8 text-center text-slate-500">Carga un archivo Excel para ver los cálculos.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- SECCIÓN DE CARACTERÍSTICAS Y PRIVACIDAD DE LA IMAGEN -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+            <!-- Tarjeta 1: Procesamiento Local -->
+            <div class="glass-panel rounded-2xl p-6 space-y-3">
+                <div class="flex items-center gap-2.5 text-cyan-400 font-bold text-sm">
+                    <i class="fa-solid fa-lock"></i>
+                    <h4>Procesamiento 100% Local & Privado</h4>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Nuestra herramienta calcula el ISR y procesa tus archivos de Excel directamente en tu navegador utilizando JavaScript. Los datos <strong class="text-slate-200">nunca se envían ni se almacenan en servidores externos</strong>, garantizando la privacidad absoluta de tu información nómina y contable.
+                </p>
+            </div>
+
+            <!-- Tarjeta 2: Tablas Oficiales -->
+            <div class="glass-panel rounded-2xl p-6 space-y-3">
+                <div class="flex items-center gap-2.5 text-blue-400 font-bold text-sm">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                    <h4>Tablas Oficiales ISR LISR 2026</h4>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Soporte preciso para todas las tarifas publicadas por el SAT para el ejercicio 2026. Calcula retenciones por períodos diarios, semanales, decenales, quincenales, mensuales y anuales, ajustando los límites de excedente y cuotas fijas al instante.
+                </p>
+            </div>
+
+            <!-- Tarjeta 3: Procesamiento Masivo -->
+            <div class="glass-panel rounded-2xl p-6 space-y-3">
+                <div class="flex items-center gap-2.5 text-emerald-400 font-bold text-sm">
+                    <i class="fa-solid fa-file-export"></i>
+                    <h4>Procesamiento Masivo & PDF / Excel</h4>
+                </div>
+                <p class="text-xs text-slate-400 leading-relaxed">
+                    Agiliza el cálculo masivo de la nómina o presupuestos de tu empresa. Carga un archivo de Excel con múltiples importes, visualiza la lista en pantalla y genera reportes institucionales estructurados en Excel o PDF horizontales en segundos.
+                </p>
+            </div>
+        </section>
+
+        <!-- Banner AdSense -->
+        <section class="glass-panel rounded-2xl p-4 text-center overflow-hidden min-h-[90px] flex items-center justify-center">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8697334409468964"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800 py-6">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+            <p>© 2026 Tax Retenciones Pro. Desarrollado para uso libre y privado.</p>
+            <button onclick="toggleAboutModal()" class="hover:text-cyan-400 transition-colors">Contacto & Sobre Nosotros</button>
+        </div>
+    </footer>
+
+    <!-- Modal Contacto -->
+    <div id="aboutModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 relative border border-slate-700">
+            <button onclick="toggleAboutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="font-bold text-slate-100 text-lg border-b border-slate-800 pb-3">Contacto & Sobre Nosotros</h3>
+            <div class="space-y-4 text-xs text-slate-300 leading-relaxed">
+                <p>Plataforma de cálculo de retenciones ISR e IVA para actividades en México conforme a la Ley del Impuesto sobre la Renta y Ley del IVA.</p>
+                <ul class="space-y-1 font-mono text-cyan-400">
+                    <li>• Correo: <a href="mailto:eduardorito85@gmail.com" class="underline">eduardorito85@gmail.com</a></li>
+                    <li>• Repositorio en GitHub: <a href="https://github.com/eduardorito" target="_blank" rel="noopener noreferrer" class="underline">GitHub Repository</a></li>
+                </ul>
+            </div>
+            <div class="pt-2 text-right">
+                <button onclick="toggleAboutModal()" class="px-5 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold">Entendido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script de Lógica de Negocio -->
+    <script>
+        let currentMode = 'direct';
+        let bulkRawData = [];
+
+        function toggleAboutModal() {
+            document.getElementById('aboutModal').classList.toggle('hidden');
+        }
+
+        function switchMode(mode) {
+            currentMode = mode;
+            document.getElementById('tabDirect').classList.toggle('active', mode === 'direct');
+            document.getElementById('tabInverse').classList.toggle('active', mode === 'inverse');
+            document.getElementById('tabBulk').classList.toggle('active', mode === 'bulk');
+
+            if (mode === 'bulk') {
+                document.getElementById('singleModule').classList.add('hidden');
+                document.getElementById('bulkModule').classList.remove('hidden');
+            } else {
+                document.getElementById('singleModule').classList.remove('hidden');
+                document.getElementById('bulkModule').classList.add('hidden');
+                document.getElementById('inputLabel').innerText = mode === 'direct' ? 'Monto Subtotal (Sin IVA)' : 'Monto Neto Deseado (A Cobrar)';
+                calculate();
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('amountInput').value = '';
+            calculate();
+        }
+
+        function getRates(act) {
+            switch(act) {
+                case 'resico_pf_pm': return { isrPct: 0.0125, ivaPct: 0.106667 };
+                case 'resico_pf_pf': return { isrPct: 0, ivaPct: 0 };
+                case 'honorarios':
+                case 'arrendamiento':
+                case 'comisiones': return { isrPct: 0.10, ivaPct: 0.106667 };
+                case 'fletes': return { isrPct: 0, ivaPct: 0.04 };
+                default: return { isrPct: 0, ivaPct: 0 };
+            }
+        }
+
+        function calculate() {
+            const val = parseFloat(document.getElementById('amountInput').value) || 0;
+            const act = document.getElementById('actType').value;
+            const rates = getRates(act);
+
+            let subtotal = 0, iva = 0, retISR = 0, retIVA = 0, totalNeto = 0;
+
+            if (currentMode === 'direct') {
+                subtotal = val;
+                iva = subtotal * 0.16;
+                retISR = subtotal * rates.isrPct;
+                retIVA = subtotal * rates.ivaPct;
+                totalNeto = subtotal + iva - retISR - retIVA;
+            } else {
+                totalNeto = val;
+                const factor = 1 + 0.16 - rates.isrPct - rates.ivaPct;
+                subtotal = factor > 0 ? totalNeto / factor : 0;
+                iva = subtotal * 0.16;
+                retISR = subtotal * rates.isrPct;
+                retIVA = subtotal * rates.ivaPct;
+            }
+
+            document.getElementById('resSubtotal').innerText = formatCurr(subtotal);
+            document.getElementById('resIVA').innerText = formatCurr(iva);
+            document.getElementById('resRetTotal').innerText = formatCurr(retISR + retIVA);
+            document.getElementById('resTotalNeto').innerText = formatCurr(totalNeto);
+
+            document.getElementById('detailSubtotal').innerText = formatCurr(subtotal);
+            document.getElementById('detailIVA').innerText = formatCurr(iva);
+            document.getElementById('detailRetISR').innerText = `-${formatCurr(retISR)}`;
+            document.getElementById('detailRetIVA').innerText = `-${formatCurr(retIVA)}`;
+            document.getElementById('detailTotalNeto').innerText = formatCurr(totalNeto);
+
+            document.getElementById('labelRetISRPct').innerText = `(${(rates.isrPct * 100).toFixed(2)}%)`;
+            document.getElementById('labelRetIVAPct').innerText = `(${(rates.ivaPct * 100).toFixed(2)}%)`;
+        }
+
+        function formatCurr(v) {
+            return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(v || 0);
+        }
+
+        calculate();
+    </script>
+</body>
+</html>
