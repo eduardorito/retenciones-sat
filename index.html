@@ -45,7 +45,7 @@
       gtag('config', 'G-8T4GC05LYQ');
     </script>
 
-    <!-- Google AdSense -->
+    <!-- Google AdSense Verification Script -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8697334409468964" crossorigin="anonymous"></script>
 
     <style>
@@ -268,7 +268,7 @@
             </section>
         </div>
 
-        <!-- SECCIÓN DE CARACTERÍSTICAS Y PRIVACIDAD DE LA IMAGEN -->
+        <!-- SECCIÓN DE CARACTERÍSTICAS Y PRIVACIDAD -->
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
             <!-- Tarjeta 1: Procesamiento Local -->
             <div class="glass-panel rounded-2xl p-6 space-y-3">
@@ -277,7 +277,7 @@
                     <h4>Procesamiento 100% Local & Privado</h4>
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
-                    Nuestra herramienta calcula el ISR y procesa tus archivos de Excel directamente en tu navegador utilizando JavaScript. Los datos <strong class="text-slate-200">nunca se envían ni se almacenan en servidores externos</strong>, garantizando la privacidad absoluta de tu información nómina y contable.
+                    Nuestra herramienta calcula las retenciones de ISR e IVA directamente en tu navegador utilizando JavaScript. Los datos <strong class="text-slate-200">nunca se envían ni se almacenan en servidores externos</strong>, garantizando la privacidad absoluta de tu información fiscal.
                 </p>
             </div>
 
@@ -285,10 +285,10 @@
             <div class="glass-panel rounded-2xl p-6 space-y-3">
                 <div class="flex items-center gap-2.5 text-blue-400 font-bold text-sm">
                     <i class="fa-solid fa-scale-balanced"></i>
-                    <h4>Tablas Oficiales ISR LISR 2026</h4>
+                    <h4>Normativa Fiscal SAT Vigente</h4>
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
-                    Soporte preciso para todas las tarifas publicadas por el SAT para el ejercicio 2026. Calcula retenciones por períodos diarios, semanales, decenales, quincenales, mensuales y anuales, ajustando los límites de excedente y cuotas fijas al instante.
+                    Alineado con las leyes de ISR e IVA para el ejercicio vigente. Calcula retenciones para RESICO (1.25%), Servicios Profesionales (10%), Arrendamiento (10%) y Fletes (4%), ajustando factores inversos al instante.
                 </p>
             </div>
 
@@ -296,24 +296,12 @@
             <div class="glass-panel rounded-2xl p-6 space-y-3">
                 <div class="flex items-center gap-2.5 text-emerald-400 font-bold text-sm">
                     <i class="fa-solid fa-file-export"></i>
-                    <h4>Procesamiento Masivo & PDF / Excel</h4>
+                    <h4>Procesamiento Masivo & Excel</h4>
                 </div>
                 <p class="text-xs text-slate-400 leading-relaxed">
-                    Agiliza el cálculo masivo de la nómina o presupuestos de tu empresa. Carga un archivo de Excel con múltiples importes, visualiza la lista en pantalla y genera reportes institucionales estructurados en Excel o PDF horizontales en segundos.
+                    Agiliza el cálculo masivo de facturación y retenciones de tus proveedores o clientes. Carga un archivo de Excel con múltiples importes, visualiza la lista en pantalla y exporta reportes estructurados en segundos.
                 </p>
             </div>
-        </section>
-
-        <!-- Banner AdSense -->
-        <section class="glass-panel rounded-2xl p-4 text-center overflow-hidden min-h-[90px] flex items-center justify-center">
-            <ins class="adsbygoogle"
-                 style="display:block"
-                 data-ad-client="ca-pub-8697334409468964"
-                 data-ad-format="auto"
-                 data-full-width-responsive="true"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
         </section>
 
     </main>
@@ -322,14 +310,37 @@
     <footer class="glass-panel border-t border-slate-800 py-6">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
             <p>© 2026 Tax Retenciones Pro. Desarrollado para uso libre y privado.</p>
-            <button onclick="toggleAboutModal()" class="hover:text-cyan-400 transition-colors">Contacto & Sobre Nosotros</button>
+            <div class="flex items-center space-x-6 font-medium">
+                <button onclick="toggleModal('privacyModal')" class="hover:text-cyan-400 transition-colors">Política de Privacidad</button>
+                <button onclick="toggleModal('aboutModal')" class="hover:text-cyan-400 transition-colors">Contacto & Sobre Nosotros</button>
+            </div>
         </div>
     </footer>
+
+    <!-- MODAL POLÍTICA DE PRIVACIDAD -->
+    <div id="privacyModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-4 relative border border-slate-700 max-h-[85vh] overflow-y-auto">
+            <button onclick="toggleModal('privacyModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="font-bold text-slate-100 text-lg border-b border-slate-800 pb-2">Política de Privacidad</h3>
+            <div class="space-y-3 text-xs text-slate-300 leading-relaxed">
+                <p>En Tax Retenciones Pro nos tomamos muy en serio la privacidad de los usuarios. Esta política describe los términos bajo los cuales opera esta herramienta.</p>
+                <h4 class="font-bold text-cyan-400">1. Procesamiento en Cliente</h4>
+                <p>Todos los cálculos y libros de Microsoft Excel son procesados exclusivamente de forma local dentro de la memoria RAM del navegador web del usuario. Ningún archivo o dato personal es subido, almacenado o transferido a servidores externos.</p>
+                <h4 class="font-bold text-cyan-400">2. Cookies y Publicidad de Terceros</h4>
+                <p>Este sitio web utiliza servicios de terceros como Google Analytics y Google AdSense. Google utiliza cookies para publicar anuncios basados en las visitas previas de los usuarios a este u otros sitios web.</p>
+            </div>
+            <div class="pt-2 text-right">
+                <button onclick="toggleModal('privacyModal')" class="px-5 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold">Cerrar</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal Contacto -->
     <div id="aboutModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
         <div class="glass-panel rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 relative border border-slate-700">
-            <button onclick="toggleAboutModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+            <button onclick="toggleModal('aboutModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <h3 class="font-bold text-slate-100 text-lg border-b border-slate-800 pb-3">Contacto & Sobre Nosotros</h3>
@@ -341,7 +352,7 @@
                 </ul>
             </div>
             <div class="pt-2 text-right">
-                <button onclick="toggleAboutModal()" class="px-5 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold">Entendido</button>
+                <button onclick="toggleModal('aboutModal')" class="px-5 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold">Entendido</button>
             </div>
         </div>
     </div>
@@ -351,8 +362,8 @@
         let currentMode = 'direct';
         let bulkRawData = [];
 
-        function toggleAboutModal() {
-            document.getElementById('aboutModal').classList.toggle('hidden');
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('hidden');
         }
 
         function switchMode(mode) {
